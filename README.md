@@ -1,4 +1,4 @@
-# Jonathan's A* (AStar) Path finder API for Unity (2D)
+# Jonathan's A* (AStar) Path finder API for Unity
 
 ## About
 
