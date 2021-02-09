@@ -84,6 +84,11 @@ namespace AStar
             BakeBlockedMap(walkableMask, this.radius);
         }
 
+        public void BakeCostMap(LayerMask costLayer, float cost)
+        {
+            BakeCostMap(costLayer, this.radius, cost);
+        }
+
         public void BakeCostMap(LayerMask costLayer, float scanRadius, float cost)
         {
             for (int y = 0; y < nodes.GetLength(0); y++)
@@ -102,7 +107,19 @@ namespace AStar
             }
         }
 
-        public void BakeMap(Tilemap unwalkableMap)
+        public void BakeCostMap(Tilemap costTilemap, float cost)
+        {
+            for (int y = 0; y < nodes.GetLength(0); y++)
+            {
+                for (int x = 0; x < nodes.GetLength(1); x++)
+                {
+                    if (costTilemap.GetTile(new Vector3Int((int)this.nodes[y, x].position.x, (int)this.nodes[y, x].position.y, (int)this.zOrigin)))
+                        this.nodes[y, x].cost = cost;
+                }
+            }
+        }
+
+        public void BakeBlockedMap(Tilemap unwalkableMap)
         {
             for (int y = 0; y < this.yNodeCount; y++)
             {

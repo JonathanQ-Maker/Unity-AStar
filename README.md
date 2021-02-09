@@ -1,11 +1,12 @@
 # Jonathan's A* (AStar) Path finder API for Unity (2D)
 
 ## About
+
 Simple A* path finder API for Unity. Supports both 3d collider based terrain and tilemap based terrain. 
 
 **This API currently only support flat terrain! 3D walls are fine as long as you expect the path finder to move around it rather than to climb it! Will fail with hills or flying!**
 
-Currently still in development phase, although it is usable key features are missing. Key features missing are map saving, multi-threading optimization, and cost baking.
+Currently still in development phase, although it is usable, key features are missing. Key features missing are map saving and multi-threading optimization.
 
 ## How to use?
 
@@ -13,7 +14,7 @@ Currently still in development phase, although it is usable key features are mis
 
 For A* to work a baked NodeMap object is requird. "Baking" is the process by which the map determins traversable and non-traversable locations.
 
-*Note: Each location on the NodeMap is represented by a Node object, AStar will use these nodes as points it can or cannot walk on. You can increase the resolution of the map by increasing the Node count*
+*Note: Each location on the NodeMap is represented by a Node object, AStar will use these nodes as points it can or cannot walk on. You can increase the resolution of the map by increasing the Node count and decreasing Node radius*
 
 **Example Code for NodeMap baking:**
 ```C#
@@ -27,18 +28,27 @@ NodeMap nodeMap = new NodeMap(0.5f, 0.5f, 0, 50, 50, 0.2f);
 // Tile map for untraversable tiles
 public Tilemap wallTileMap;
 
+// Tile map for traversable but undesirable tiles
+public Tilemap waterTileMap;
+
 
 void Start()
 {
     // To "Bake" the node map to capture untraversable areas.
-    nodeMap.BakeMap(wallTileMap);
+    nodeMap.BakeBlockedMap(wallTileMap);
+
+    // Bake traversable but not desirable areas with 1.5 cost for tilemap based terrain
+    nodeMap.BakeCostMap(waterTileMap, 1.5f);
 
     /* 
-    * For 3D map baking
+    * For collider based map baking
     * 
-    * Overloaded method, takes integer repersenting LayerMask id for *IGNORED* physics layer
+    * Overloaded method, takes integer repersenting LayerMask (id + 1) for *IGNORED* physics layer
     */
-    nodeMap.BakeMap(3);
+    nodeMap.BakeBlockedMap(LayerMask.GetMask("Ignore Raycast"));
+
+    // Bake traversable but not desirable areas with 1.5 cost for collider based terrain
+    nodeMap.BakeCostMap(LayerMask.GetMask("Water"), 1.5f);
 }
 ```
 
